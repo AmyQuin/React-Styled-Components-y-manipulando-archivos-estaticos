@@ -8,6 +8,7 @@ import Galeria from "./components/Galeria"
 import fotos from "./fotos.json"
 import { useState } from "react"
 import ModalZoom from "./components/MovalZoom"
+import Pie from "./components/Pie"
 
 
 const FondoGradiente = styled.div`
@@ -37,6 +38,24 @@ const App = () => {
   const [fotosDeGaleria, setFotosDeGaleria] = useState(fotos)  //Mostraremos la foto
   const [fotoSeleccionada, setFotoSeleccionada] = useState(null)
 
+  const alAlternarFavorito = (foto) => {
+
+    if (foto.id === fotoSeleccionada?.id) {
+      setFotoSeleccionada({
+        ...fotoSeleccionada,
+        favorita: !fotoSeleccionada.favorita
+      })
+
+    }
+
+    setFotosDeGaleria(fotosDeGaleria.map(fotoDeGaleria => {
+      return {
+        ...fotoDeGaleria,
+        favorita: fotoDeGaleria.id === foto.id ? !foto.favorita : fotoDeGaleria.favorita
+      }
+    }))
+  }
+
 
   return (
     <>
@@ -49,11 +68,14 @@ const App = () => {
             <ContenidoGaleria>
               <Banner texto="La galería más completa de fotos del espacio" backgroundImage={banner} />
               
-              <Galeria alSeleccionarFoto={foto=>setFotoSeleccionada(foto)} fotos={fotosDeGaleria}/>
+              <Galeria alSeleccionarFoto={foto=>setFotoSeleccionada(foto)} fotos={fotosDeGaleria} alAlternarFavorito={alAlternarFavorito}/>
             </ContenidoGaleria>
           </MainContainer>
         </AppContainer>
-        <ModalZoom foto={fotoSeleccionada}/>
+        <ModalZoom foto={fotoSeleccionada}
+          alCerrar={() => setFotoSeleccionada(null)}
+          alAlternarFavorito={alAlternarFavorito} />
+          <Pie/>
       </FondoGradiente>
     </>
   )
